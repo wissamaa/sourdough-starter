@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#2c1a0e" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Sourdough" />
+  <meta name="description" content="7-Day Sourdough Starter guide with daily reminders and progress tracking" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <title>Sourdough Starter</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cream: #f5ede0;
+      --warm-white: #faf6f0;
+      --brown-dark: #2c1a0e;
+      --brown-mid: #5c3d20;
+      --brown-light: #a0703a;
+      --tan: #c9a87c;
+      --green: #4a6741;
+      --green-light: #d4e6d0;
+      --red: #8b2e2e;
+      --red-light: #f5d5d5;
+      --amber: #c87941;
+      --amber-light: #fdecd8;
+      --text: #1e1008;
+      --text-soft: #6b4c30;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--warm-white);
+      color: var(--text);
+      min-height: 100vh;
+      min-height: 100dvh;
+      overflow-x: hidden;
+    }
+
+    /* NAV */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--brown-dark);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      height: 60px;
+      padding-top: env(safe-area-inset-top);
+    }
+    .nav-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      color: var(--cream);
+      letter-spacing: 0.02em;
+    }
+    .nav-tabs {
+      display: flex;
+      gap: 6px;
+    }
+    .nav-tab {
+      background: none;
+      border: none;
+      color: var(--tan);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .nav-tab.active {
+      background: var(--amber);
+      color: var(--brown-dark);
+    }
+
+    /* SCREENS */
+    .screen { display: none; padding: 20px; max-width: 480px; margin: 0 auto; padding-bottom: 40px; }
+    .screen.active { display: block; }
+
+    /* HERO */
+    .hero {
+      background: linear-gradient(135deg, var(--brown-dark) 0%, var(--brown-mid) 100%);
+      border-radius: 20px;
+      padding: 28px 24px;
+      margin-bottom: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '🌾';
+      position: absolute;
+      right: -10px;
+      top: -10px;
+      font-size: 100px;
+      opacity: 0.08;
+      transform: rotate(15deg);
+    }
+    .hero-day {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--tan);
+      margin-bottom: 6px;
+    }
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      color: var(--cream);
+      margin-bottom: 8px;
+      line-height: 1.2;
+    }
+    .hero-sub {
+      font-size: 0.85rem;
+      color: var(--tan);
+      line-height: 1.5;
+    }
+    .progress-bar-wrap {
+      margin-top: 20px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      height: 8px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--amber);
+      border-radius: 10px;
+      transition: width 0.6s ease;
+    }
+    .progress-label {
+      margin-top: 6px;
+      font-size: 0.7rem;
+      color: var(--tan);
+      text-align: right;
+    }
+
+    /* CARDS */
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 14px;
+      box-shadow: 0 2px 12px rgba(44,26,14,0.07);
+      border: 1px solid rgba(44,26,14,0.05);
+    }
+    .card-label {
+      font-size: 0.7rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-soft);
+      margin-bottom: 10px;
+    }
+    .card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      margin-bottom: 12px;
+      color: var(--brown-dark);
+    }
+
+    /* INGREDIENTS */
+    .ingredient-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .ingredient-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--amber-light);
+      border-radius: 10px;
+      padding: 10px 14px;
+    }
+    .ingredient-amount {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--amber);
+      min-width: 44px;
+      font-variant-numeric: tabular-nums;
+    }
+    .ingredient-name {
+      font-size: 0.9rem;
+      color: var(--brown-dark);
+    }
+
+    /* STEPS */
+    .step-list { display: flex; flex-direction: column; gap: 10px; }
+    .step-row {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .step-num {
+      width: 26px;
+      height: 26px;
+      min-width: 26px;
+      background: var(--brown-dark);
+      color: var(--cream);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 600;
+      margin-top: 1px;
+    }
+    .step-text {
+      font-size: 0.9rem;
+      line-height: 1.55;
+      color: var(--text);
+    }
+
+    /* STATUS BADGE */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      margin-bottom: 12px;
+    }
+    .status-badge.warning { background: #fef3c7; color: #92400e; }
+    .status-badge.info { background: var(--green-light); color: var(--green); }
+    .status-badge.alert { background: var(--red-light); color: var(--red); }
+
+    /* MARK DONE BUTTON */
+    .btn-primary {
+      width: 100%;
+      padding: 15px;
+      background: var(--brown-dark);
+      color: var(--cream);
+      border: none;
+      border-radius: 14px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn-primary:active { transform: scale(0.98); background: var(--brown-mid); }
+    .btn-primary.done {
+      background: var(--green);
+    }
+    .btn-secondary {
+      padding: 10px 18px;
+      background: none;
+      color: var(--text-soft);
+      border: 1.5px solid var(--tan);
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-secondary:active { background: var(--amber-light); }
+
+    /* ALERTS / OBSERVATIONS */
+    .observation-list { display: flex; flex-direction: column; gap: 8px; }
+    .observation-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: var(--green-light);
+      font-size: 0.85rem;
+      line-height: 1.45;
+      color: var(--green);
+    }
+
+    /* TIMER */
+    .timer-card {
+      background: var(--brown-dark);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 14px;
+      color: var(--cream);
+    }
+    .timer-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--tan); margin-bottom: 6px; }
+    .timer-display {
+      font-size: 2.8rem;
+      font-variant-numeric: tabular-nums;
+      font-weight: 300;
+      letter-spacing: -0.02em;
+      color: var(--cream);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .timer-sub { font-size: 0.8rem; color: var(--tan); }
+    .timer-actions { display: flex; gap: 10px; margin-top: 16px; }
+    .btn-timer {
+      flex: 1;
+      padding: 10px;
+      border: 1.5px solid var(--tan);
+      background: none;
+      color: var(--cream);
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-timer.primary-timer { background: var(--amber); border-color: var(--amber); color: var(--brown-dark); font-weight: 600; }
+    .btn-timer:active { transform: scale(0.97); }
+
+    /* DAY LIST */
+    .day-list { display: flex; flex-direction: column; gap: 10px; }
+    .day-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+      background: white;
+      border-radius: 14px;
+      box-shadow: 0 1px 8px rgba(44,26,14,0.06);
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .day-item.current { border-color: var(--amber); }
+    .day-item.completed { border-color: var(--green); background: #f8fff8; }
+    .day-circle {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+    .day-circle.future { background: var(--cream); color: var(--text-soft); }
+    .day-circle.current { background: var(--amber); color: var(--brown-dark); }
+    .day-circle.completed { background: var(--green); color: white; }
+    .day-info { flex: 1; }
+    .day-name { font-weight: 500; font-size: 0.95rem; margin-bottom: 2px; }
+    .day-desc { font-size: 0.78rem; color: var(--text-soft); }
+
+    /* TROUBLESHOOT */
+    .trouble-item {
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 10px;
+      border: 1px solid rgba(44,26,14,0.08);
+    }
+    .trouble-header {
+      padding: 14px 18px;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+    .trouble-header .icon { font-size: 1.1rem; margin-right: 10px; }
+    .trouble-body {
+      display: none;
+      padding: 14px 18px;
+      background: #faf6f0;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      color: var(--text-soft);
+      border-top: 1px solid rgba(44,26,14,0.06);
+    }
+    .trouble-body.open { display: block; }
+    .trouble-chevron { transition: transform 0.2s; font-size: 0.7rem; color: var(--text-soft); }
+    .trouble-chevron.open { transform: rotate(180deg); }
+
+    /* FLOAT TEST */
+    .float-test {
+      background: linear-gradient(135deg, #e8f4e8, #d4e6d0);
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 14px;
+    }
+    .float-test h4 { font-family: 'Playfair Display', serif; margin-bottom: 8px; color: var(--green); }
+    .float-test p { font-size: 0.85rem; color: var(--green); line-height: 1.5; }
+
+    /* INSTALL BANNER */
+    .install-banner {
+      background: var(--amber-light);
+      border: 1.5px solid var(--tan);
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
+      display: none;
+    }
+    .install-banner.show { display: flex; gap: 12px; align-items: flex-start; }
+    .install-banner p { font-size: 0.82rem; color: var(--brown-mid); line-height: 1.5; }
+    .install-banner strong { display: block; margin-bottom: 4px; color: var(--brown-dark); }
+
+    /* NOTIFICATION ROW */
+    .notif-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--cream);
+    }
+    .notif-row:last-child { border-bottom: none; }
+    .notif-label { font-size: 0.9rem; }
+    .notif-sub { font-size: 0.75rem; color: var(--text-soft); margin-top: 2px; }
+    .toggle {
+      width: 46px;
+      height: 26px;
+      background: #ddd;
+      border-radius: 13px;
+      position: relative;
+      cursor: pointer;
+      transition: background 0.2s;
+      border: none;
+      flex-shrink: 0;
+    }
+    .toggle::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: white;
+      border-radius: 50%;
+      top: 3px;
+      left: 3px;
+      transition: left 0.2s;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    }
+    .toggle.on { background: var(--green); }
+    .toggle.on::after { left: 23px; }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.35rem;
+      margin-bottom: 16px;
+      color: var(--brown-dark);
+    }
+    .divider { height: 1px; background: var(--cream); margin: 16px 0; }
+
+    /* Feeding reminder highlight */
+    .twice-daily {
+      background: var(--red-light);
+      border-radius: 10px;
+      padding: 10px 14px;
+      margin-bottom: 12px;
+      font-size: 0.85rem;
+      color: var(--red);
+      font-weight: 500;
+    }
+
+    .emoji-big { font-size: 2rem; margin-bottom: 8px; display: block; }
+
+    @media (prefers-color-scheme: dark) {
+      body { background: #1a1008; color: #f0e8dc; }
+      .card { background: #2c1f12; border-color: rgba(255,255,255,0.05); }
+      .day-item { background: #2c1f12; }
+      .trouble-header { background: #2c1f12; color: #f0e8dc; }
+      .trouble-body { background: #231508; color: #c0a880; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-title">🍞 Sourdough</span>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showScreen('today')">Today</button>
+    <button class="nav-tab" onclick="showScreen('schedule')">Days</button>
+    <button class="nav-tab" onclick="showScreen('help')">Help</button>
+  </div>
+</nav>
+
+<!-- TODAY SCREEN -->
+<div class="screen active" id="screen-today">
+
+  <div id="install-banner" class="install-banner">
+    <span style="font-size:1.5rem">📲</span>
+    <div>
+      <p><strong>Add to Home Screen</strong>Tap the share button → "Add to Home Screen" to install this app on your phone.</p>
+    </div>
+  </div>
+
+  <div class="hero" id="hero-section">
+    <div class="hero-day" id="hero-day-label">Getting Started</div>
+    <div class="hero-title" id="hero-title">Start Your Journey</div>
+    <div class="hero-sub" id="hero-sub">Tap "Begin Day 1" to start your 7-day sourdough starter.</div>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+    <div class="progress-label" id="progress-label">Day 0 of 9+</div>
+  </div>
+
+  <div id="day-content"></div>
+
+</div>
+
+<!-- SCHEDULE SCREEN -->
+<div class="screen" id="screen-schedule">
+  <div class="section-title">7-Day Plan</div>
+  <div class="day-list" id="day-list"></div>
+</div>
+
+<!-- HELP SCREEN -->
+<div class="screen" id="screen-help">
+  <div class="section-title">Troubleshooting</div>
+
+  <div class="float-test">
+    <h4>🫧 The Float Test</h4>
+    <p>On Day 8+, drop a tablespoon of starter into room-temperature water. If it floats, your starter is ready to bake with. If it sinks, keep feeding for another day or two.</p>
+  </div>
+
+  <div id="trouble-list"></div>
+
+  <div class="divider"></div>
+  <div class="card">
+    <div class="card-label">Understanding Ratios</div>
+    <p style="font-size:0.85rem;line-height:1.6;color:var(--text-soft)">
+      Ratios like <strong>1:2:2</strong> mean: <strong>1 part starter</strong> : <strong>2 parts flour</strong> : <strong>2 parts water</strong> (all by weight).<br><br>
+      As your starter matures, you increase the ratio (e.g. 1:4:4, 1:10:10) to slow fermentation and reduce sourness.
+    </p>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Storing Your Mature Starter</div>
+    <p style="font-size:0.85rem;line-height:1.6;color:var(--text-soft)">
+      Feed your starter, let it sit at room temperature for 2 hours, then refrigerate. Feed once a week if kept cold. For very active starters, feed twice daily at room temp using a 1:7:7 or 1:10:10 ratio.
+    </p>
+  </div>
+
+  <div class="card">
+    <div class="card-label">About This Recipe</div>
+    <p style="font-size:0.85rem;line-height:1.6;color:var(--text-soft)">
+      Recipe from <strong>Natasha's Baking</strong> (natashasbaking.com). Uses minimal discard — a gentler, more economical method for beginners.
+    </p>
+  </div>
+</div>
+
+<script>
+// ─── DATA ───────────────────────────────────────────────────────────────────
+const DAYS = [
+  {
+    day: 1,
+    title: "First Mix",
+    shortDesc: "Mix flour & water, let sit 24h",
+    observations: ["You may see no activity yet — that's normal"],
+    twiceDaily: false,
+    ingredients: [
+      { amount: "30g", name: "Filtered water" },
+      { amount: "30g", name: "Whole wheat or rye flour" }
+    ],
+    steps: [
+      "Mix water and flour together in a mason jar or glass canister.",
+      "Loosely cover the jar — you want airflow, not a sealed lid.",
+      "Let sit at 80°F / 27°C for 24 hours (near a sunny window or in a turned-off oven)."
+    ]
+  },
+  {
+    day: 2,
+    title: "First Feeding",
+    shortDesc: "Add more flour & water",
+    observations: [
+      "You should see some bubbles today",
+      "A bad smell is completely normal — don't worry!",
+      "Some volume change may be visible"
+    ],
+    twiceDaily: false,
+    ingredients: [
+      { amount: "30g", name: "Filtered water" },
+      { amount: "30g", name: "Whole wheat or rye flour" }
+    ],
+    steps: [
+      "Add the water and flour to your existing jar.",
+      "Stir well to combine.",
+      "Loosely cover and store at 80°F / 27°C for 24 hours."
+    ]
+  },
+  {
+    day: 3,
+    title: "First Discard",
+    shortDesc: "Separate 20g into new jar",
+    observations: [
+      "Should see more bubbles and some volume rise",
+      "Doubled volume is a great sign",
+      "Bad smell is still normal — it will improve"
+    ],
+    twiceDaily: false,
+    ingredients: [
+      { amount: "20g", name: "Ripe starter (from existing jar)" },
+      { amount: "20g", name: "Filtered water" },
+      { amount: "20g", name: "Whole wheat or rye flour" }
+    ],
+    steps: [
+      "Separate 20g of your starter into a new clean jar.",
+      "Discard the rest (or save in fridge for pancakes!).",
+      "Add 20g water and 20g flour to the new jar — this is a 1:1:1 ratio.",
+      "Stir well, loosely cover, and store at 80°F / 27°C for 24 hours."
+    ]
+  },
+  {
+    day: 4,
+    title: "Keep Going",
+    shortDesc: "Same as Day 3 — 1:1:1",
+    observations: [
+      "Activity (bubbles, volume) should be visible",
+      "Smell will start improving slowly",
+      "This is your rhythm now: separate → discard → feed"
+    ],
+    twiceDaily: false,
+    ingredients: [
+      { amount: "20g", name: "Ripe starter" },
+      { amount: "20g", name: "Filtered water" },
+      { amount: "20g", name: "Whole wheat or rye flour" }
+    ],
+    steps: [
+      "Separate 20g (about 3 tsp) of starter into a fresh jar.",
+      "Discard yesterday's remaining starter.",
+      "Add 20g water and 20g flour — 1:1:1 ratio.",
+      "Stir well, loosely cover, store at 80°F / 27°C for 24 hours."
+    ]
+  },
+  {
+    day: 5,
+    title: "Twice Daily 🎉",
+    shortDesc: "Start feeding morning & evening",
+    observations: [
+      "Starter is almost ready!",
+      "Should smell noticeably better — tangy, not putrid",
+      "Should be doubling in volume reliably"
+    ],
+    twiceDaily: true,
+    ingredients: [
+      { amount: "20g", name: "Ripe starter (per feeding)" },
+      { amount: "20g", name: "Filtered water (per feeding)" },
+      { amount: "20g", name: "Whole wheat or rye flour (per feeding)" }
+    ],
+    steps: [
+      "Feed twice a day now: morning and evening.",
+      "Each feeding: separate 20g starter into a fresh jar, add 20g water + 20g flour.",
+      "Stir, loosely cover, and leave at 80°F / 27°C until next feeding.",
+      "Repeat this morning + evening schedule."
+    ]
+  },
+  {
+    day: 6,
+    title: "Building Strength",
+    shortDesc: "Two feedings a day — 1:1:1",
+    observations: [
+      "Your starter is ready, but needs more strength",
+      "Watch for doubled volume within 12 hours",
+      "If it peaks in under 12h and deflates, increase ratio to 1:2:2"
+    ],
+    twiceDaily: true,
+    ingredients: [
+      { amount: "20g", name: "Ripe starter (per feeding)" },
+      { amount: "20g", name: "Filtered water (per feeding)" },
+      { amount: "20g", name: "Whole wheat or rye flour (per feeding)" }
+    ],
+    steps: [
+      "Continue feeding twice a day (morning and evening).",
+      "Same 1:1:1 ratio as Day 5.",
+      "If starter peaks faster than 12 hours and deflates, increase to 1:2:2 ratio."
+    ]
+  },
+  {
+    day: 7,
+    title: "Almost Ready",
+    shortDesc: "Two feedings a day — 1:1:1",
+    observations: [
+      "Getting stronger every feeding",
+      "Should smell pleasantly sour, like yogurt",
+      "Volume should reliably double (or more)"
+    ],
+    twiceDaily: true,
+    ingredients: [
+      { amount: "20g", name: "Ripe starter (per feeding)" },
+      { amount: "20g", name: "Filtered water (per feeding)" },
+      { amount: "20g", name: "Whole wheat or rye flour (per feeding)" }
+    ],
+    steps: [
+      "Continue feeding twice a day.",
+      "Keep the 1:1:1 ratio (adjust to 1:2:2 if peaking too fast).",
+      "Tomorrow you'll do the float test!"
+    ]
+  },
+  {
+    day: 8,
+    title: "Float Test Day!",
+    shortDesc: "Test if your starter is ready",
+    observations: [
+      "If it floats: congratulations — you're ready to bake! 🎉",
+      "If it sinks: keep feeding twice daily for 1–2 more days",
+      "A tangy smell and active bubbles are great signs"
+    ],
+    twiceDaily: false,
+    ingredients: [
+      { amount: "5g", name: "Ripe starter" },
+      { amount: "10g", name: "Filtered water" },
+      { amount: "10g", name: "Whole wheat or rye flour" }
+    ],
+    steps: [
+      "Drop a tablespoon of starter into a bowl of room-temperature water.",
+      "If it floats → your starter is ready to bake with!",
+      "If it sinks → feed twice daily (1:2:2 ratio) for another day.",
+      "For feeding: use 5g starter, 10g water, 10g flour (1:2:2)."
+    ]
+  },
+  {
+    day: 9,
+    title: "Bake (or Keep Training)",
+    shortDesc: "Ongoing maintenance",
+    observations: [
+      "Starter peaking in under 12h? Increase ratio to 1:3:3 or 1:4:4",
+      "More stable fermentation = milder flavor",
+      "Continue float testing until consistently floating"
+    ],
+    twiceDaily: false,
+    ingredients: [
+      { amount: "5g", name: "Ripe starter" },
+      { amount: "15g", name: "Filtered water" },
+      { amount: "15g", name: "Whole wheat or rye flour" }
+    ],
+    steps: [
+      "Continue twice-daily feedings at 1:3:3 ratio (or increase as needed).",
+      "If starter peaks in under 12 hours, increase to 1:4:4.",
+      "Once it consistently floats and peaks reliably, you're baking-ready!",
+      "To store long-term: feed, let sit 2 hours, refrigerate."
+    ]
+  }
+];
+
+const TROUBLESHOOT = [
+  { emoji: "😶", problem: "No activity at all", answer: "Try one more feeding. If still nothing after another 24h, your flour may be the issue — try switching to a different brand or type of whole grain flour." },
+  { emoji: "💧", problem: "Liquid on the surface", answer: "This is called 'hooch' — a naturally occurring alcohol. It means your starter is hungry and slightly weak. Pour it off or stir it in, then feed as usual." },
+  { emoji: "🦠", problem: "Mold visible", answer: "Discard the entire batch immediately. Your flour is likely stale or contaminated. Start fresh with new flour from a freshly opened bag." },
+  { emoji: "🌊", problem: "Starter overflowing the jar", answer: "Great sign! Just use a larger jar, or use less flour and water next time. Continue feeding at 1:2:2 ratio twice daily." },
+  { emoji: "😖", problem: "Really bad smell (like vomit)", answer: "Completely normal in Days 1–4! Early fermentation produces unpleasant gases. As the good bacteria take over, the smell will shift to a pleasant tangy/yogurt aroma by Day 5–7." },
+  { emoji: "📉", problem: "Not doubling after Day 7", answer: "Temperature is likely too cool. Sourdough thrives at 80°F/27°C. Try placing it near a warm oven, on top of the fridge, or in a slightly warmed (turned off) oven with just the light on." },
+  { emoji: "😮‍💨", problem: "Too sour / tangy taste in bread", answer: "This comes from a young or very active starter. Keep feeding daily and the acidity will balance out. Also try using it at peak (just risen, before it falls)." }
+];
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
+let state = JSON.parse(localStorage.getItem('sourdough_state') || '{}');
+
+if (!state.startDate) {
+  state.currentDay = 0;
+  state.completedDays = [];
+  state.timerStart = null;
+}
+
+function save() {
+  localStorage.setItem('sourdough_state', JSON.stringify(state));
+}
+
+function getCurrentDayIndex() {
+  return Math.min(state.currentDay - 1, DAYS.length - 1);
+}
+
+function getDayData() {
+  if (state.currentDay === 0) return null;
+  return DAYS[getCurrentDayIndex()];
+}
+
+// ─── TIMER ───────────────────────────────────────────────────────────────────
+let timerInterval = null;
+
+function startTimer(hours) {
+  state.timerEnd = Date.now() + hours * 60 * 60 * 1000;
+  save();
+  runTimer();
+}
+
+function runTimer() {
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(updateTimerDisplay, 1000);
+  updateTimerDisplay();
+}
+
+function getTimerRemaining() {
+  if (!state.timerEnd) return null;
+  const remaining = state.timerEnd - Date.now();
+  return remaining > 0 ? remaining : 0;
+}
+
+function formatTime(ms) {
+  if (ms === null) return '--:--:--';
+  const totalSec = Math.floor(ms / 1000);
+  const h = Math.floor(totalSec / 3600);
+  const m = Math.floor((totalSec % 3600) / 60);
+  const s = totalSec % 60;
+  return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+
+function updateTimerDisplay() {
+  const el = document.getElementById('timer-display');
+  const subEl = document.getElementById('timer-sub');
+  if (!el) return;
+  const rem = getTimerRemaining();
+  if (rem === null) {
+    el.textContent = '--:--:--';
+    if (subEl) subEl.textContent = 'No timer running';
+  } else if (rem === 0) {
+    el.textContent = '00:00:00';
+    if (subEl) subEl.textContent = '✅ Time to feed!';
+    clearInterval(timerInterval);
+  } else {
+    el.textContent = formatTime(rem);
+    const hours = Math.ceil(rem / (1000*60*60));
+    if (subEl) subEl.textContent = `Feed in ~${hours}h`;
+  }
+}
+
+// ─── RENDER ───────────────────────────────────────────────────────────────────
+function renderHero() {
+  const dayLabel = document.getElementById('hero-day-label');
+  const title = document.getElementById('hero-title');
+  const sub = document.getElementById('hero-sub');
+  const fill = document.getElementById('progress-fill');
+  const label = document.getElementById('progress-label');
+
+  if (state.currentDay === 0) {
+    dayLabel.textContent = 'Ready to begin?';
+    title.textContent = 'Your Starter Awaits';
+    sub.textContent = 'Follow the 7-day plan to grow a healthy sourdough starter from scratch.';
+    fill.style.width = '0%';
+    label.textContent = 'Not started yet';
+  } else {
+    const data = getDayData();
+    const pct = Math.min((state.currentDay / 9) * 100, 100);
+    dayLabel.textContent = `Day ${state.currentDay} of 9`;
+    title.textContent = data.title;
+    sub.textContent = data.shortDesc;
+    fill.style.width = pct + '%';
+    label.textContent = `${Math.round(pct)}% complete`;
+  }
+}
+
+function renderDayContent() {
+  const container = document.getElementById('day-content');
+
+  if (state.currentDay === 0) {
+    container.innerHTML = `
+      <div class="card" style="text-align:center;padding:32px 24px">
+        <span class="emoji-big">🌾</span>
+        <h3 style="margin-bottom:10px">Let's Grow a Starter</h3>
+        <p style="font-size:0.85rem;color:var(--text-soft);line-height:1.6;margin-bottom:20px">
+          You'll need: a mason jar, kitchen scale, filtered water, and whole wheat or rye flour. Set aside about 5 minutes per day for 7–9 days.
+        </p>
+        <button class="btn-primary" onclick="beginJourney()">🍞 Begin Day 1</button>
+      </div>
+    `;
+    return;
+  }
+
+  const data = getDayData();
+  const isDone = state.completedDays.includes(state.currentDay);
+
+  let twiceHtml = data.twiceDaily ? `<div class="twice-daily">⚡ Feed twice today — morning & evening. Ingredients below are per feeding.</div>` : '';
+
+  let ingredientsHtml = data.ingredients.map(i =>
+    `<div class="ingredient-row">
+      <span class="ingredient-amount">${i.amount}</span>
+      <span class="ingredient-name">${i.name}</span>
+    </div>`
+  ).join('');
+
+  let stepsHtml = data.steps.map((s, i) =>
+    `<div class="step-row">
+      <div class="step-num">${i+1}</div>
+      <div class="step-text">${s}</div>
+    </div>`
+  ).join('');
+
+  let observationsHtml = data.observations.map(o =>
+    `<div class="observation-row"><span>🔍</span><span>${o}</span></div>`
+  ).join('');
+
+  const timerRem = getTimerRemaining();
+  const timerActive = timerRem !== null && timerRem > 0;
+
+  const nextDayBtn = state.currentDay < DAYS.length
+    ? `<button class="btn-secondary" onclick="nextDay()" style="margin-top:10px;width:100%">Move to Day ${state.currentDay + 1} →</button>`
+    : '';
+
+  container.innerHTML = `
+    ${twiceHtml}
+
+    <div class="card">
+      <div class="card-label">Ingredients</div>
+      <div class="ingredient-list">${ingredientsHtml}</div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Instructions</div>
+      <div class="step-list">${stepsHtml}</div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">What to Look For</div>
+      <div class="observation-list">${observationsHtml}</div>
+    </div>
+
+    <div class="timer-card">
+      <div class="timer-label">Fermentation Timer</div>
+      <div class="timer-display" id="timer-display">${formatTime(timerRem)}</div>
+      <div class="timer-sub" id="timer-sub">${timerActive ? 'Timer running' : 'Start a timer after feeding'}</div>
+      <div class="timer-actions">
+        <button class="btn-timer primary-timer" onclick="startTimer(12)">⏱ 12h Timer</button>
+        <button class="btn-timer primary-timer" onclick="startTimer(24)">⏱ 24h Timer</button>
+        <button class="btn-timer" onclick="clearTimer()">Clear</button>
+      </div>
+    </div>
+
+    ${state.currentDay >= 8 ? `
+    <div class="float-test">
+      <h4>🫧 Float Test</h4>
+      <p>Drop a tablespoon of starter into room-temp water. Floats = ready! Sinks = feed one more day.</p>
+    </div>` : ''}
+
+    <button class="btn-primary ${isDone ? 'done' : ''}" onclick="markDone()">
+      ${isDone ? '✅ Day ' + state.currentDay + ' Complete' : '✓ Mark Day ' + state.currentDay + ' Done'}
+    </button>
+    ${nextDayBtn}
+  `;
+
+  if (timerActive) runTimer();
+  else if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+}
+
+function renderDayList() {
+  const container = document.getElementById('day-list');
+  container.innerHTML = DAYS.map(d => {
+    const isDone = state.completedDays.includes(d.day);
+    const isCurrent = state.currentDay === d.day;
+    const cls = isDone ? 'completed' : isCurrent ? 'current' : '';
+    const circleCls = isDone ? 'completed' : isCurrent ? 'current' : 'future';
+    const icon = isDone ? '✓' : d.day;
+    return `
+      <div class="day-item ${cls}" onclick="jumpToDay(${d.day})">
+        <div class="day-circle ${circleCls}">${icon}</div>
+        <div class="day-info">
+          <div class="day-name">Day ${d.day} — ${d.title}</div>
+          <div class="day-desc">${d.shortDesc}</div>
+        </div>
+        ${isCurrent ? '<span style="color:var(--amber);font-size:1.1rem">→</span>' : ''}
+      </div>
+    `;
+  }).join('');
+}
+
+function renderTrouble() {
+  const container = document.getElementById('trouble-list');
+  container.innerHTML = TROUBLESHOOT.map((t, i) => `
+    <div class="trouble-item">
+      <div class="trouble-header" onclick="toggleTrouble(${i}, this)">
+        <span><span class="icon">${t.emoji}</span>${t.problem}</span>
+        <span class="trouble-chevron" id="chev-${i}">▼</span>
+      </div>
+      <div class="trouble-body" id="tbody-${i}">${t.answer}</div>
+    </div>
+  `).join('');
+}
+
+function toggleTrouble(i, headerEl) {
+  const body = document.getElementById('tbody-' + i);
+  const chev = document.getElementById('chev-' + i);
+  body.classList.toggle('open');
+  chev.classList.toggle('open');
+}
+
+// ─── ACTIONS ─────────────────────────────────────────────────────────────────
+function beginJourney() {
+  state.currentDay = 1;
+  state.startDate = new Date().toISOString();
+  state.completedDays = [];
+  save();
+  renderAll();
+}
+
+function markDone() {
+  if (!state.completedDays.includes(state.currentDay)) {
+    state.completedDays.push(state.currentDay);
+    save();
+  }
+  renderDayContent();
+}
+
+function nextDay() {
+  if (state.currentDay < DAYS.length) {
+    if (!state.completedDays.includes(state.currentDay)) {
+      state.completedDays.push(state.currentDay);
+    }
+    state.currentDay++;
+    state.timerEnd = null;
+    save();
+    renderAll();
+  }
+}
+
+function jumpToDay(day) {
+  if (state.currentDay === 0) return;
+  state.currentDay = day;
+  save();
+  showScreen('today');
+  renderAll();
+}
+
+function clearTimer() {
+  state.timerEnd = null;
+  save();
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  renderDayContent();
+}
+
+// ─── SCREENS ─────────────────────────────────────────────────────────────────
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  const tabs = document.querySelectorAll('.nav-tab');
+  const map = { today: 0, schedule: 1, help: 2 };
+  tabs[map[name]].classList.add('active');
+  if (name === 'today') { renderHero(); renderDayContent(); }
+  if (name === 'schedule') renderDayList();
+}
+
+function renderAll() {
+  renderHero();
+  renderDayContent();
+  renderDayList();
+}
+
+// ─── INSTALL BANNER ───────────────────────────────────────────────────────────
+function showInstallHint() {
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isAndroid = /android/i.test(navigator.userAgent);
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+  if (!isStandalone && (isIOS || isAndroid)) {
+    document.getElementById('install-banner').classList.add('show');
+  }
+}
+
+// ─── SERVICE WORKER ───────────────────────────────────────────────────────────
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+renderAll();
+renderTrouble();
+showInstallHint();
+</script>
+</body>
+</html>
